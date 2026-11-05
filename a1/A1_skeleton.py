@@ -405,7 +405,6 @@ class A1Trainer:
         print('Device:', device)
         self.model.to(device)
         
-        
         # TODO: Relevant arguments: at least args.learning_rate, but you can optionally also consider
         # other Adam-related hyperparameters here.
         optimizer = torch.optim.AdamW(self.model.parameters(), lr=args.learning_rate) 
