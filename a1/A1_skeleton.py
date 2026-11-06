@@ -306,7 +306,7 @@ class A1RNNModel(PreTrainedModel):
         self.config
         self.embedding = nn.Embedding(config.vocab_size, config.embedding_size)
         self.rnn = nn.LSTM(config.embedding_size, config.hidden_size, 
-                            num_layers=1, batch_first=True)
+                            num_layers=getattr(config, "num_layers", 1), batch_first=True)
         self.unembedding = nn.Linear(config.hidden_size, config.vocab_size)
         self.post_init() # for compatibility 
         
