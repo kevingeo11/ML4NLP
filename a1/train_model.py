@@ -103,6 +103,7 @@ if __name__ == "__main__":
         num_train_epochs=args.epochs,
         per_device_train_batch_size=args.train_batch_size,
         per_device_eval_batch_size=args.eval_batch_size,
+        report_to="none"
     )
 
     start = time.perf_counter()
