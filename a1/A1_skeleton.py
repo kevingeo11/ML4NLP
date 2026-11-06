@@ -6,7 +6,7 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 
 from torch.utils.data import DataLoader
 import numpy as np
-import sys, time, os
+import sys, time, os, json
 
 ###
 ### Part 1. Tokenization.
@@ -430,7 +430,7 @@ class A1Trainer:
         #       optimizer.step()
 
         tokenizer = self.processing_class
-
+        history = []
         for epoch in range(int(args.num_train_epochs)):
             self.model.train()
             total_loss = 0.0
@@ -462,6 +462,19 @@ class A1Trainer:
 
             print(f'epoch {epoch+1}: train loss {total_loss/len(train_loader):.4f}, '
                   f'val loss {val_loss:.4f}, perplexity {np.exp(val_loss):.2f}')
+
+            history.append({
+                "epoch": epoch + 1,
+                "train_loss": total_loss / len(train_loader),
+                "val_loss": val_loss,
+                "perplexity": float(np.exp(val_loss))
+            })
+
+            # Save history after every epoch
+            with open(
+                os.path.join(args.output_dir, "training_history.json"), "w"
+            ) as f:
+                json.dump(history, f, indent=4)
                     
 
         print(f'Saving to {args.output_dir}.')

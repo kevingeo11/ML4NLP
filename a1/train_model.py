@@ -42,6 +42,11 @@ if __name__ == "__main__":
     )
     model = A1RNNModel(config)
 
+    assert model.rnn.num_layers == args.num_layers, (
+        f"Requested {args.num_layers} layers, "
+        f"but model has {model.rnn.num_layers}"
+    )
+
     # Model statistics
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(
