@@ -53,8 +53,8 @@ def predict_next_token(model, tokenizer, sentence, device, top_k=10):
 if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    tokenizer = A1Tokenizer.from_file("tokenizer.pkl")
-    model = A1RNNModel.from_pretrained("./model.pt")
+    tokenizer = A1Tokenizer.from_file("tokenizers/tokenizer_1024.pkl")
+    model = A1RNNModel.from_pretrained("models/lstm_v1024_e256_h512_l5_ep10_bs128")
     model.to(device)
 
     sentences = [
