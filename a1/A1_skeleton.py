@@ -201,7 +201,8 @@ class A1Tokenizer:
         input_ids = []
         for text in texts:
             # splitting text into bytes
-            seq = split_into_bytes(text.strip())
+            # seq = split_into_bytes(text.strip())
+            seq = split_into_bytes(text)
 
             # applying merge rules in order of appearance
             for pair in self.merge_rules:
