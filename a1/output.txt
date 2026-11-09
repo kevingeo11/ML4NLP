@@ -1,0 +1,85 @@
+Output
+--------------------
+ 
+Model: models/lstm_v512_e512_h1024_l2_ep50_bs128
+Tokenizer: tokenizers/tokenizer_512.pkl
+Device: cpu
+Vocabulary size: 512
+Embedding size: 512
+Hidden size: 1024
+LSTM layers: 2
+Validation paragraphs: 17874
+
+Evaluating validation dataset...
+
+Validation Results
+Cross-entropy loss: 2.3283
+Perplexity:         10.26
+
+Next token predictions
+--------------------
+
+Prompt: 'She lives in San '
+Top 5 next BPE tokens:
+  b'F'                   probability: 0.3548
+  b'J'                   probability: 0.1734
+  b'D'                   probability: 0.0895
+  b'A'                   probability: 0.0635
+  b'M'                   probability: 0.0598
+
+Prompt: 'The history of'
+Top 5 next BPE tokens:
+  b't'                   probability: 0.5927
+  b'f'                   probability: 0.3947
+  b'p'                   probability: 0.0015
+  b', '                  probability: 0.0011
+  b':'                   probability: 0.0009
+
+Prompt: 'Gothenburg is '
+Top 5 next BPE tokens:
+  b'a '                  probability: 0.2039
+  b'the '                probability: 0.1679
+  b'b'                   probability: 0.0533
+  b'an '                 probability: 0.0480
+  b'one '                probability: 0.0474
+
+Prompt: 'I like to eat '
+Top 5 next BPE tokens:
+  b'the '                probability: 0.1431
+  b'and '                probability: 0.0746
+  b'B'                   probability: 0.0659
+  b'th'                  probability: 0.0373
+  b'al'                  probability: 0.0316
+
+Prompt: 'Scientists discovered that'
+Top 5 next BPE tokens:
+  b', '                  probability: 0.8377
+  b':'                   probability: 0.0554
+  '<EOS>'                probability: 0.0334
+  b"'s "                 probability: 0.0279
+  b', the '              probability: 0.0115
+
+
+
+Some Auto Completions (max 100 tokens using argmax)
+--------------------
+
+Prompt: She lives in San 
+Completion: She lives in San Francisco in 1899 by the French Revolution, who was the first to put the public in 1862 to 1898 to 1899 in 1899.  He was the first of these two principal schools in 1888 and 1888.  
+Stopped by: token limit
+
+Prompt: The history of
+Completion: The history often refers to a certain category of collections as a "collective county" of "college" ("college") and the "public domain" ("college").
+Stopped by: <EOS>
+
+Prompt: Gothenburg is 
+Completion: Gothenburg is a member of the United States Congress in 1990 to reduce the country in a series of public schools in America.  However, in 2008 there were 18 million people in 2010 to 2015 (15 percent of 
+Stopped by: token limit
+
+Prompt: I like to eat 
+Completion: I like to eat the same way as a symbol of a circle of a circle of a circle, is a matter of a circle of a circle of 10 years.  However, it is not the same as the same as the "n"-line "y", "z", "c", "c", "d"
+Stopped by: token limit
+
+Prompt: Scientists discovered that
+Completion: Scientists discovered that, in 1998, he was the first to represent the first published work in 1998 by the University of California, where he was founded in 1986 by the University of California, where he was founded in 1986 by the Univer
+Stopped by: token limit
