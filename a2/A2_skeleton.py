@@ -1,7 +1,8 @@
+# Names: Kevin George, Sofia Larsson, Thémis Halka
 
 import torch
 from torch import nn
-from transformers import PreTrainedModel, PretrainedConfig
+from transformers import PretrainedConfig, PreTrainedModel
 from transformers.modeling_outputs import CausalLMOutputWithPast
 
 
