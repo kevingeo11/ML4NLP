@@ -4,7 +4,12 @@ import torch
 from torch import nn
 from transformers import PretrainedConfig, PreTrainedModel
 from transformers.modeling_outputs import CausalLMOutputWithPast
+from torch.nn import SiLU
+from torch.utils.data import DataLoader
 
+import numpy as np
+import os
+import json
 
 class A2ModelConfig(PretrainedConfig):
     """Configuration object that stores hyperparameters that define the Transformer language model."""
@@ -32,20 +37,33 @@ class A2MLP(nn.Module):
         super().__init__()
         assert(config.hidden_act == 'silu')
         # TODO: initalize components here
+        self.gated_proj = nn.Linear(config.hidden_size, config.intermediate_size, bias=False)
+        self.up_proj = nn.Linear(config.hidden_size, config.intermediate_size, bias=False)
+        self.activation = SiLU()
+        self.down_proj = nn.Linear(config.intermediate_size, config.hidden_size, bias=False)
+        
 
     def forward(self, hidden_states):
-        ...
+        hidden_states1 = self.gated_proj(hidden_states)
+        hidden_states1 = self.activation(hidden_states1)
 
+        hidden_states2 = self.up_proj(hidden_states)
+
+        hidden_states = hidden_states1 * hidden_states2
+        hidden_states = self.down_proj(hidden_states)
+
+        return hidden_states  
+    
 # This is optional, since you can use PyTorch's RMSNorm.
-class A2RMSNorm(nn.Module):
-    """RMS layer normalization."""
-    def __init__(self, config):
-        super().__init__()
-        # TODO: Use config.rms_norm_eps
-        # TODO: initalize weights here
+# class A2RMSNorm(nn.Module):
+#     """RMS layer normalization."""
+#     def __init__(self, config):
+#         super().__init__()
+#         # TODO: Use config.rms_norm_eps
+#         # TODO: initalize weights here
 
-    def forward(self, hidden_states):
-        ...
+#     def forward(self, hidden_states):
+#         ...
 
 
 class A2Attention(nn.Module):
@@ -54,10 +72,43 @@ class A2Attention(nn.Module):
     def __init__(self, config):
         super().__init__()
         # TODO: set up W_q, W_k, W_v, W_o here
+        self.num_attention_heads = config.num_attention_heads
+        self.hidden_size = config.hidden_size
+
+        assert self.hidden_size % self.num_attention_heads == 0
+        self.head_dim = self.hidden_size // self.num_attention_heads
+
+        self.W_q = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+        self.W_k = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+        self.W_v = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+        self.W_o = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+        
         # TODO: set up normalizers here
+        self.norm_q = nn.RMSNorm(self.hidden_size, eps=config.rms_norm_eps)
+        self.norm_k = nn.RMSNorm(self.hidden_size, eps=config.rms_norm_eps)
+
 
     def forward(self, hidden_states, rope_rotations):
-        ...
+
+        batch_size, seq_length, _ = hidden_states.size()
+
+        q = self.W_q(hidden_states)
+        k = self.W_k(hidden_states)
+        v = self.W_v(hidden_states)
+
+        q = self.norm_q(q)
+        k = self.norm_k(k)
+
+        q = q.view(batch_size, seq_length, self.num_attention_heads, self.head_dim).transpose(1, 2)
+        k = k.view(batch_size, seq_length, self.num_attention_heads, self.head_dim).transpose(1, 2)
+        v = v.view(batch_size, seq_length, self.num_attention_heads, self.head_dim).transpose(1, 2)
+
+        q, k = apply_rotary_pos_emb(q, k, rope_rotations)
+
+        attn_output = nn.functional.scaled_dot_product_attention(q, k, v, is_causal=True)
+        attn_output = attn_output.transpose(1, 2).reshape(batch_size, seq_length, self.hidden_size)
+        output = self.W_o(attn_output)
+        return output
 
 
 class A2DecoderLayer(nn.Module):
@@ -65,9 +116,21 @@ class A2DecoderLayer(nn.Module):
     def __init__(self, config):
         super().__init__()
         # TODO: set up attention, MLP, and normalizers here.
+        self.mha = A2Attention(config)
+        self.mlp = A2MLP(config)
+        self.post_mha_norm = nn.RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.post_mlp_norm = nn.RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+
 
     def forward(self, hidden_states, rope_rotations):
-        ...
+        hidden_states_res = self.mha(hidden_states, rope_rotations)
+        hidden_states_res = self.post_mha_norm(hidden_states_res)
+        hidden_states = hidden_states + hidden_states_res
+        hidden_states_res = self.mlp(hidden_states)
+        hidden_states_res = self.post_mlp_norm(hidden_states_res)
+        hidden_states = hidden_states + hidden_states_res
+
+        return hidden_states
 
 
 class A2Transformer(PreTrainedModel):
@@ -81,6 +144,10 @@ class A2Transformer(PreTrainedModel):
         self.rotary_emb = A2RotaryEmbedding(config)
         # TODO: Set up the other components here.
         # TODO: put all transformer decoder layers in a ModuleList.
+        self.embedding = nn.Embedding(config.vocab_size, config.hidden_size)
+        self.decoder_layers = nn.ModuleList([A2DecoderLayer(config) for _ in range(config.num_hidden_layers)])
+        self.norm = nn.RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.unembedding = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
 
         self.pad_token_id = config.pad_token_id
 
@@ -99,16 +166,25 @@ class A2Transformer(PreTrainedModel):
 
         loss_func = nn.CrossEntropyLoss(ignore_index=self.pad_token_id)
 
-        X = ... # all columns in labels except the last one
-        Y = ... # all columns in labels except the first one
+        X = labels[:,:-1] # all columns in labels except the last one
+        Y = labels[:, 1:] # all columns in labels except the first one
 
         rope_rotations = self.rotary_emb(X) # pass this to all the transformer decoder layers
 
         # TODO: Call embedding, transformer decoder layers, last normalizer, and unembedding.
-        ...
+        hidden_states = self.embedding(X)
+        for layer in self.decoder_layers:
+            hidden_states = layer(hidden_states, rope_rotations)
+        hidden_states = self.norm(hidden_states)
+        logits = self.unembedding(hidden_states)
 
+        loss = loss_func(
+            logits.reshape(-1, self.config.vocab_size),
+            Y.reshape(-1)
+        )
+        
         # TODO: compute the loss for the model output and Y
-        return CausalLMOutputWithPast(...)
+        return CausalLMOutputWithPast(loss=loss, logits=logits)
 
 
 #### RoPE implementation (copied and simplified from HuggingFace). ####
@@ -157,3 +233,141 @@ class A2RotaryEmbedding(nn.Module):
             cos = emb.cos()
             sin = emb.sin()
             return cos, sin
+
+
+
+# The trainer from the prev assg
+class A1Trainer:
+    """A minimal implementation similar to a Trainer from the HuggingFace library."""
+
+    def __init__(self, model, args, train_dataset, eval_dataset, processing_class):
+        self.model = model
+        self.args = args
+        self.train_dataset = train_dataset
+        self.eval_dataset = eval_dataset
+        self.processing_class = processing_class
+
+        assert args.optim == 'adamw_torch'
+        assert args.eval_strategy == 'epoch'
+
+    def select_device(self):
+        """Return the device to use for training."""
+        if self.args.use_cpu:
+            return torch.device('cpu')
+        if torch.cuda.is_available():
+            return torch.device('cuda')
+        if torch.backends.mps.is_available():
+            return torch.device('mps')
+        return torch.device('cpu')
+
+    def collate_fn(self, batch):
+        """Pad already-tokenized sequences to the longest sequence in the batch."""
+
+        sequences = [item['input_ids'] for item in batch]
+        max_length = max(len(seq) for seq in sequences)
+
+        padded_sequences = []
+
+        for seq in sequences:
+            pad_length = max_length - len(seq)
+
+            padded_seq = seq + [
+                self.processing_class.pad_token_id
+            ] * pad_length
+
+            padded_sequences.append(padded_seq)
+
+        return torch.tensor(padded_sequences, dtype=torch.long)
+
+    def train(self):
+        """Train the model using pre-tokenized datasets."""
+
+        args = self.args
+
+        device = self.select_device()
+        print('Device:', device)
+        self.model.to(device)
+
+        optimizer = torch.optim.AdamW(
+            self.model.parameters(),
+            lr=args.learning_rate
+        )
+
+        train_loader = DataLoader(
+            self.train_dataset,
+            batch_size=args.per_device_train_batch_size,
+            shuffle=True,
+            collate_fn=self.collate_fn
+        )
+
+        val_loader = DataLoader(
+            self.eval_dataset,
+            batch_size=args.per_device_eval_batch_size,
+            shuffle=False,
+            collate_fn=self.collate_fn
+        )
+
+        history = []
+
+        for epoch in range(int(args.num_train_epochs)):
+            self.model.train()
+            total_loss = 0.0
+
+            for step, batch in enumerate(train_loader):
+
+                # Already tokenized and padded
+                labels = batch.to(device)
+
+                output = self.model(labels)
+
+                optimizer.zero_grad()
+                output.loss.backward()
+                optimizer.step()
+
+                total_loss += output.loss.item()
+
+                if step % 100 == 0:
+                    print(
+                        f'epoch {epoch+1} step {step}/{len(train_loader)} '
+                        f'loss {output.loss.item():.4f}'
+                    )
+
+            self.model.eval()
+            val_loss = 0.0
+
+            with torch.no_grad():
+                for batch in val_loader:
+
+                    labels = batch.to(device)
+
+                    output = self.model(labels)
+                    val_loss += output.loss.item()
+
+            val_loss /= len(val_loader)
+
+            train_loss = total_loss / len(train_loader)
+
+            print(
+                f'epoch {epoch+1}: '
+                f'train loss {train_loss:.4f}, '
+                f'val loss {val_loss:.4f}, '
+                f'perplexity {np.exp(val_loss):.2f}'
+            )
+
+            history.append({
+                "epoch": epoch + 1,
+                "train_loss": train_loss,
+                "val_loss": val_loss,
+                "perplexity": float(np.exp(val_loss))
+            })
+
+            # Save history after every epoch
+            os.makedirs(args.output_dir, exist_ok=True)
+
+            with open(
+                os.path.join(args.output_dir, "training_history.json"), "w"
+            ) as f:
+                json.dump(history, f, indent=4)
+
+        print(f'Saving to {args.output_dir}.')
+        self.model.save_pretrained(args.output_dir)
