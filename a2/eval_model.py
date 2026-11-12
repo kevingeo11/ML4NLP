@@ -102,7 +102,7 @@ if __name__ == "__main__":
     # Command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--tokenizer", default="tokenizers/tokenizer_512.pkl")
-    parser.add_argument("--model", default="models/lstm_v512_e512_h1024_l2_ep50_bs128")
+    parser.add_argument("--model", default="models/transformer_small")
     parser.add_argument("--val_file", default="val.txt")
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--max_length", type=int, default=100)
