@@ -1,0 +1,55 @@
+Output
+--------------------
+ 
+Model: models/transformer_small
+Tokenizer: tokenizers/tokenizer_512.pkl
+Device: cuda
+
+Evaluating validation dataset...
+
+Validation Results
+Cross-entropy loss: 6.8005
+Perplexity:         898.34
+
+Next token predictions
+--------------------
+
+Prompt: 'She lives in San'
+Most likely next token: b'z'
+
+Prompt: 'Gothenburg is'
+Most likely next token: b' a'
+
+Prompt: 'In natural language processing, a Transformer'
+Most likely next token: b','
+
+Prompt: 'Is Stockholm the capital of Sweden? Answer yes or no. The answer is'
+Most likely next token: b' a'
+
+Prompt: 'Write a Python program that reverses a list.'
+Most likely next token: b'  '
+
+
+
+Some Auto Completions (max 100 tokens using argmax)
+--------------------
+
+Prompt: She lives in San
+Completion: She lives in Sanakan, the of the oflg, the oflg, were the in the.  In theth andth, the, in the, was by the H, and the of, which was the to.  The H, which the of in, was a, as
+Stopped by: token limit
+
+Prompt: Gothenburg is
+Completion: Gothenburg is the of the of.  The's, the of, was on the, which from theth.  , Got, was a of Joia, the to the of Got on the of Ja in.  Gotn was in theth, and the to Ja,
+Stopped by: token limit
+
+Prompt: In natural language processing, a Transformer
+Completion: In natural language processing, a Transformer, a "c of the of the", is a to the, and the is a for the.  The is "Cand" for the of the.
+Stopped by: <EOS>
+
+Prompt: Is Stockholm the capital of Sweden? Answer yes or no. The answer is
+Completion: Is Stockholm the capital of Sweden? Answer yes or no. The answer is a steward p.   is the of the d, as a of the d in the d.
+Stopped by: <EOS>
+
+Prompt: Write a Python program that reverses a list.
+Completion: Write a Python program that reverses a list.   and his are tob, aren't the are to.   have:
+Stopped by: <EOS>

@@ -3,12 +3,27 @@ import math
 import sys
 
 import torch
+from A2_skeleton import *
 from datasets import load_dataset
+from tokenizer import A1Tokenizer
 from torch.distributions import Categorical
 from torch.utils.data import DataLoader
 
-from A2_skeleton import *
-from tokenizer import A1Tokenizer
+
+def collate_fn(batch, pad_token_id):
+    """Pad already-tokenized sequences to the longest sequence in the batch."""
+
+    sequences = [item['input_ids'] for item in batch]
+    max_length = max(len(seq) for seq in sequences)
+
+    padded_sequences = []
+
+    for seq in sequences:
+        pad_length = max_length - len(seq)
+        padded_seq = seq + [pad_token_id] * pad_length
+        padded_sequences.append(padded_seq)
+
+    return torch.tensor(padded_sequences, dtype=torch.long)
 
 
 def evaluate(model, val_loader, device):
@@ -20,9 +35,9 @@ def evaluate(model, val_loader, device):
     
     with torch.no_grad():
         for batch in val_loader:
-            input_ids = batch['input_ids'].to(device)
+            labels = batch.to(device)
             
-            output = model(input_ids)
+            output = model(labels)
             loss = output.loss
             
             total_loss += loss.item()
@@ -82,7 +97,7 @@ def generate(model, tokenizer, prompt, device, max_length, temperature, topk):
             next_token_logits = filtered_logits
 
             distribution = Categorical(logits=next_token_logits)
-            next_token_id = distribution.sample().unsqueeze(0)
+            next_token_id = distribution.sample().unsqueeze(0).unsqueeze(0)  # Shape: (1, 1)
 
             if next_token_id.item() == eos_token_id:
                 stopped_by_eos = True
@@ -130,10 +145,14 @@ if __name__ == "__main__":
         remove_columns=['text'],
     )
 
+    # get pad_token_id from the tokenizer
+    pad_token_id = tokenizer.pad_token_id
+
     val_loader = DataLoader(
         dataset,
         batch_size=args.batch_size,
-        shuffle=False
+        shuffle=False,
+        collate_fn=lambda batch: collate_fn(batch, pad_token_id)
     )
 
     # Print to terminal and save to output file
@@ -155,6 +174,7 @@ if __name__ == "__main__":
         sys.stdout = Tee(original_stdout, f)
  
         try:
+            print("Names: Kevin George, Sofia Larsson, Thémis Halka")
             print("Output")
             print("-" * 20)
             print(" ")
