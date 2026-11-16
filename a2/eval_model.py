@@ -1,3 +1,4 @@
+# Names: Kevin George, Sofia Larsson, Thémis Halka
 import argparse
 import math
 import sys
@@ -9,6 +10,7 @@ from tokenizer import A1Tokenizer
 from torch.distributions import Categorical
 from torch.utils.data import DataLoader
 
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 def collate_fn(batch, pad_token_id):
     """Pad already-tokenized sequences to the longest sequence in the batch."""
@@ -72,7 +74,7 @@ def next_token_predictions(model, tokenizer, prompt, device):
     print(f"Most likely next token: {predicted_token!r}")
 
 
-def generate(model, tokenizer, prompt, device, max_length, temperature, topk):
+def generate(model, tokenizer, prompt, device, max_length, temperature, topk, flag="ours"):
     """Generate text given a prompt using top-k sampling."""
 
     model.eval()
@@ -103,11 +105,17 @@ def generate(model, tokenizer, prompt, device, max_length, temperature, topk):
                 stopped_by_eos = True
                 break
 
-            input_ids = torch.cat([
-                input_ids[:, :-1],
-                next_token_id,
-                input_ids[:, -1:]
-            ], dim=1)
+            if flag == "ours":
+                input_ids = torch.cat([
+                    input_ids[:, :-1],
+                    next_token_id,
+                    input_ids[:, -1:]
+                ], dim=1)
+            else:
+                input_ids = torch.cat([
+                    input_ids,
+                    next_token_id,
+                ], dim=1)
 
     return tokenizer.decode(input_ids[0]), stopped_by_eos
 
@@ -133,6 +141,12 @@ if __name__ == "__main__":
     device = "cpu" if args.use_cpu else "cuda"
     model.to(device)
     model.eval()
+
+    local_dir = '/data/courses/2025_dat450_dit247/models/OLMo-2-0425-1B'
+    tokenizer_olmo = AutoTokenizer.from_pretrained(local_dir, local_files_only=True)
+    model_olmo = AutoModelForCausalLM.from_pretrained(local_dir, local_files_only=True)
+    model_olmo.to(device)
+    model_olmo.eval()
  
     # Load validation dataset
     dataset = load_dataset("text", data_files={"val": args.val_file})["val"]
@@ -196,7 +210,7 @@ if __name__ == "__main__":
             prompts = [
                 'She lives in San',
                 'Gothenburg is',
-                'In natural language processing, a Transformer',
+                'In natural language processing,',
                 'Is Stockholm the capital of Sweden? Answer yes or no. The answer is',
                 'Write a Python program that reverses a list.'
             ]
@@ -208,7 +222,7 @@ if __name__ == "__main__":
                 next_token_predictions(model, tokenizer, prompt, device)
  
             print("\n")
-            print("\nSome Auto Completions (max 100 tokens using argmax)")
+            print("\nSome Auto Completions")
             print("-" * 20)
  
             for prompt in prompts:
@@ -220,6 +234,30 @@ if __name__ == "__main__":
                     args.max_length,
                     args.temperature,
                     args.top_k,
+                    "ours"
+                )
+ 
+                print(f"\nPrompt: {prompt}")
+                print(f"Completion: {text}")
+                print(
+                    "Stopped by:",
+                    "<EOS>" if stopped_by_eos else "token limit"
+                )
+
+            print("\n")
+            print("\nSome Auto Completions for pretrained OLMO")
+            print("-" * 20)
+ 
+            for prompt in prompts:
+                text, stopped_by_eos = generate(
+                    model_olmo,
+                    tokenizer_olmo,
+                    prompt,
+                    device,
+                    args.max_length,
+                    args.temperature,
+                    args.top_k,
+                    "pretrained"
                 )
  
                 print(f"\nPrompt: {prompt}")

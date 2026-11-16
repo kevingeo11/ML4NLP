@@ -1,3 +1,4 @@
+# Names: Kevin George, Sofia Larsson, Thémis Halka
 import os
 import time
 import argparse

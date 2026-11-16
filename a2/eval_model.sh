@@ -38,12 +38,12 @@ python -u eval_model.py \
     --val_file "val.txt" \
     --batch_size 64 \
     --max_length 100 \
-    --temperature 0.7 \
-    --top_k 10 \
-    --output "output.txt" \
+    --temperature 0.6 \
+    --top_k 20 \
+    --output "output_$SLURM_JOB_ID.txt" \
     "$@"
 
 echo "================================"
 echo "Finished at: $(date)"
-echo "Results saved to output.txt"
+echo "Results saved to output_$SLURM_JOB_ID.txt"
 echo "================================"

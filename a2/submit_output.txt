@@ -1,0 +1,91 @@
+Names: Kevin George, Sofia Larsson, Thémis Halka
+Output
+--------------------
+ 
+Model: models/transformer_v16384_h512_l6_ah8_bs64_ep10
+Tokenizer: tokenizers/tokenizer_16384.pkl
+Device: cuda
+
+Evaluating validation dataset...
+
+Validation Results
+Cross-entropy loss: 4.1643
+Perplexity:         64.35
+
+Next token predictions
+--------------------
+
+Prompt: 'She lives in San'
+Most likely next token: b' Francisco'
+
+Prompt: 'Gothenburg is'
+Most likely next token: b' the'
+
+Prompt: 'In natural language processing,'
+Most likely next token: b' the'
+
+Prompt: 'Is Stockholm the capital of Sweden? Answer yes or no. The answer is'
+Most likely next token: b' to'
+
+Prompt: 'Write a Python program that reverses a list.'
+Most likely next token: b'  '
+
+
+
+Some Auto Completions
+--------------------
+
+Prompt: She lives in San
+Completion: She lives in San Diego, California, in the summer of 1974, San Francisco, California, the United Kingdom, the United States, and Canada.  She has a history of nationalization and a cultural revival.  She has a history of cultural revival, history, and history.  She has been featured in many national television shows such as "Castles in America" and "Castles in America".  Her life is marked by the rise of the United States, the history of acting plays and the
+Stopped by: token limit
+
+Prompt: Gothenburg is
+Completion: Gothenburg is a type of transport tool used for the manufacture of the Churchill and Churchill artillery.  The Bundaberg Rum building is a large section of the Bundaberg Rum building.  The Bundaberg Rum building is a large part of the larger Bundaberg Rum building, which was created in 1970.  It is located in the Churchill area of the Bundaberg Rum building.  The Bundaberg Rum building was designed from the
+Stopped by: token limit
+
+Prompt: In natural language processing,
+Completion: In natural language processing, a computer networking system is created by a number of hardware providers, including:
+Stopped by: <EOS>
+
+Prompt: Is Stockholm the capital of Sweden? Answer yes or no. The answer is
+Completion: Is Stockholm the capital of Sweden? Answer yes or no. The answer is "AB" for "either is at the heart of the heart of the water of the water (or the water of the water is "toten").  This is about 1.5 cm (about 100 mm.)  and 50 cm (about 150 cm) per gram.
+Stopped by: <EOS>
+
+Prompt: Write a Python program that reverses a list.
+Completion: Write a Python program that reverses a list.  The last part of the system is known as the "data-hyphenalogy".  In the early system, the system is used to write the language, grammar, grammar, and grammar of the language.  The program is called the "data-hyphenal" (the language of grammar and grammar).  The final part of the system is called the "data-hyphenal", or the "data-hyphenal" system
+Stopped by: token limit
+
+
+
+Some Auto Completions for pretrained OLMO
+--------------------
+
+Prompt: She lives in San
+Completion: She lives in San Antonio, Texas, and is a 2009 graduate of the University of Texas at San Antonio.
+
+The book's main character is a young woman named Della. Her father is a preacher who has an affair with a woman from his congregation. This causes Della to run away from home and live with a homeless man who is a friend of her father. Della's father is very angry with her for leaving and refuses to speak to her for a year. Della goes to live with a
+Stopped by: token limit
+
+Prompt: Gothenburg is
+Completion: Gothenburg is a municipality in Sweden. It is located in the southern part of the region Skåne, in the south of the province Scania and in the south of the province Halland. The municipality is the third largest in Sweden, with 265,000 inhabitants. The name "Bo" comes from the old Swedish word for "fort", and the first part "Got" is the old Swedish word for "land". The name "Goth" is the old Germanic word for "people".
+Stopped by: token limit
+
+Prompt: In natural language processing,
+Completion: In natural language processing, the process of converting the text of a document, or a collection of documents, into a structured form that can be used by a computer for the purposes of analysis or other tasks. This is often done using a set of rules that can be applied to the text. The rules can be used to extract keywords, identify relationships between concepts, or classify documents based on their content. Natural language processing is an important part of many computer applications, including search engines, social media platforms, and document management systems.
+
+
+Stopped by: token limit
+
+Prompt: Is Stockholm the capital of Sweden? Answer yes or no. The answer is
+Completion: Is Stockholm the capital of Sweden? Answer yes or no. The answer is no. The capital of Sweden is Gothenburg. It is located on the west coast of Sweden. It is a port city. It is the home of Volvo and Ericsson. The city is also a university center. The city is also known for its museums. The city is about 200 miles from Stockholm. The city is home to about 600,000 people. The city is also known for its parks and gardens. The city has a long history. It was founded in the 
+Stopped by: token limit
+
+Prompt: Write a Python program that reverses a list.
+Completion: Write a Python program that reverses a list. The program should reverse the list in place, that is, the original list should be left unchanged. Your program should output the reversed list. If the input list is empty, the output should be empty. You may return a list of lists that is the reversed list; the list of lists can be reversed by calling itself recursively.
+
+Example input:
+
+[1, 2, [3, 4, 5]]
+Example output:
+[1, 2, 3, 4, 
+Stopped by: token limit

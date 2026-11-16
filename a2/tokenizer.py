@@ -1,3 +1,4 @@
+# Names: Kevin George, Sofia Larsson, Thémis Halka
 import re
 from collections import Counter
 import pickle
