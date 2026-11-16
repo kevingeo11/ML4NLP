@@ -33,13 +33,13 @@ mkdir -p logs
 # Run model evaluation
 # Default parameters (can be overridden via command line)
 python -u eval_model.py \
-    --tokenizer "tokenizers/tokenizer_512.pkl" \
-    --model "models/transformer_small" \
+    --tokenizer "tokenizers/tokenizer_16384.pkl" \
+    --model "models/transformer_v16384_h512_l6_ah8_bs64_ep10" \
     --val_file "val.txt" \
     --batch_size 64 \
     --max_length 100 \
-    --temperature 1.0 \
-    --top_k 5 \
+    --temperature 0.7 \
+    --top_k 10 \
     --output "output.txt" \
     "$@"
 

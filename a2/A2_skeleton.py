@@ -1,15 +1,16 @@
 # Names: Kevin George, Sofia Larsson, Thémis Halka
-
-import torch
-from torch import nn
-from transformers import PretrainedConfig, PreTrainedModel
-from transformers.modeling_outputs import CausalLMOutputWithPast
-from torch.nn import SiLU
-from torch.utils.data import DataLoader
+import json
+import os
+import shutil
 
 import numpy as np
-import os
-import json
+import torch
+from torch import nn
+from torch.nn import SiLU
+from torch.utils.data import DataLoader
+from transformers import PretrainedConfig, PreTrainedModel
+from transformers.modeling_outputs import CausalLMOutputWithPast
+
 
 class A2ModelConfig(PretrainedConfig):
     """Configuration object that stores hyperparameters that define the Transformer language model."""
@@ -361,9 +362,21 @@ class A1Trainer:
                 "perplexity": float(np.exp(val_loss))
             })
 
-            # Save history after every epoch
+            # Save checkpoint after every epoch
             os.makedirs(args.output_dir, exist_ok=True)
+            
+            checkpoint_dir = os.path.join(args.output_dir, f"checkpoint_epoch_{epoch+1}")
+            self.model.save_pretrained(checkpoint_dir)
+            print(f"Checkpoint saved to: {checkpoint_dir}")
+            
+            # Delete previous epoch checkpoint to save disk space
+            if epoch > 0:
+                prev_checkpoint_dir = os.path.join(args.output_dir, f"checkpoint_epoch_{epoch}")
+                if os.path.exists(prev_checkpoint_dir):
+                    shutil.rmtree(prev_checkpoint_dir)
+                    print(f"Deleted previous checkpoint: {prev_checkpoint_dir}")
 
+            # Save history after every epoch
             with open(
                 os.path.join(args.output_dir, "training_history.json"), "w"
             ) as f:
@@ -372,3 +385,9 @@ class A1Trainer:
         print(f'Saving to {args.output_dir}.')
         self.model.save_pretrained(args.output_dir)
         
+        # Delete the last checkpoint since we have the final model
+        final_checkpoint_dir = os.path.join(args.output_dir, f"checkpoint_epoch_{int(args.num_train_epochs)}")
+        if os.path.exists(final_checkpoint_dir):
+            shutil.rmtree(final_checkpoint_dir)
+            print(f"Deleted final checkpoint: {final_checkpoint_dir}")
+            print(f"Final model saved to: {args.output_dir}")

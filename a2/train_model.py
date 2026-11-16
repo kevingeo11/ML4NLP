@@ -18,10 +18,10 @@ if __name__ == "__main__":
     parser.add_argument("--train_batch_size", type=int, default=64)
     parser.add_argument("--eval_batch_size", type=int, default=64)
 
-    parser.add_argument("--hidden_size", type=int, default=4096)
-    parser.add_argument("--intermediate_size", type=int, default=11008)
-    parser.add_argument("--num_layers", type=int, default=32)
-    parser.add_argument("--num_attention_heads", type=int, default=32)
+    parser.add_argument("--hidden_size", type=int, default=512)
+    parser.add_argument("--intermediate_size", type=int, default=1024)
+    parser.add_argument("--num_layers", type=int, default=4)
+    parser.add_argument("--num_attention_heads", type=int, default=8)
     parser.add_argument("--max_position_embeddings", type=int, default=2048)
     parser.add_argument("--rope_theta", type=float, default=10000.0)
     parser.add_argument("--rms_norm_eps", type=float, default=1e-5)
@@ -177,6 +177,12 @@ if __name__ == "__main__":
 
     trainer.train()
     trainer.save_model(model_dir)
+
+    # if there are any checkpoints, delete the last one since we have the final model
+    final_checkpoint_dir = os.path.join(model_dir, f"checkpoint_epoch_{args.epochs}")
+    if os.path.exists(final_checkpoint_dir):
+        shutil.rmtree(final_checkpoint_dir)
+        print(f"Deleted final checkpoint: {final_checkpoint_dir}")
 
     print(
         f"Training took {time.perf_counter() - start:.1f}s"

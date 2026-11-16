@@ -27,7 +27,39 @@ echo "================================"
 # Verify GPU allocation
 nvidia-smi
 
+VOCAB_SIZE=512
+LEARNING_RATE=1e-4
+EPOCHS=2
+TRAIN_BATCH_SIZE=128
+EVAL_BATCH_SIZE=128
+HIDDEN_SIZE=512
+INTERMEDIATE_SIZE=1024
+LAYERS=2
+NUM_ATTENTION_HEADS=8
+MAX_POSITION_EMBEDDINGS=2048
+ROPE_THETA=10000.0
+RMS_NORM_EPS=1e-5
+
+tokenizer="tokenizers/tokenizer_${VOCAB_SIZE}.pkl"
+model_name="transformer_v${VOCAB_SIZE}_h${HIDDEN_SIZE}_l${LAYERS}_ah${NUM_ATTENTION_HEADS}_bs${TRAIN_BATCH_SIZE}_ep${EPOCHS}"
+
 # Run model training
-python -u train_model.py "$@"
+python -u train_model.py \
+    --tokenizer "$tokenizer" \
+    --epochs 10 \
+    --epochs "$EPOCHS" \
+    --learning_rate "$LEARNING_RATE" \
+    --train_batch_size "$TRAIN_BATCH_SIZE" \
+    --eval_batch_size "$EVAL_BATCH_SIZE" \
+    --hidden_size "$HIDDEN_SIZE" \
+    --intermediate_size "$INTERMEDIATE_SIZE" \
+    --num_layers "$LAYERS" \
+    --num_attention_heads "$NUM_ATTENTION_HEADS" \
+    --max_position_embeddings "$MAX_POSITION_EMBEDDINGS" \
+    --rope_theta "$ROPE_THETA" \
+    --rms_norm_eps "$RMS_NORM_EPS" \
+    --output_dir models \
+    --model_name "$model_name" \
+    "$@"
 
 echo "Finished at: $(date)"

@@ -1,30 +1,31 @@
+Names: Kevin George, Sofia Larsson, Thémis Halka
 Output
 --------------------
  
-Model: models/transformer_small
-Tokenizer: tokenizers/tokenizer_512.pkl
+Model: models/transformer_v16384_h512_l6_ah8_bs64_ep10
+Tokenizer: tokenizers/tokenizer_16384.pkl
 Device: cuda
 
 Evaluating validation dataset...
 
 Validation Results
-Cross-entropy loss: 6.8005
-Perplexity:         898.34
+Cross-entropy loss: 4.1643
+Perplexity:         64.35
 
 Next token predictions
 --------------------
 
 Prompt: 'She lives in San'
-Most likely next token: b'z'
+Most likely next token: b' Francisco'
 
 Prompt: 'Gothenburg is'
-Most likely next token: b' a'
+Most likely next token: b' the'
 
 Prompt: 'In natural language processing, a Transformer'
-Most likely next token: b','
+Most likely next token: b' is'
 
 Prompt: 'Is Stockholm the capital of Sweden? Answer yes or no. The answer is'
-Most likely next token: b' a'
+Most likely next token: b' to'
 
 Prompt: 'Write a Python program that reverses a list.'
 Most likely next token: b'  '
@@ -35,21 +36,21 @@ Some Auto Completions (max 100 tokens using argmax)
 --------------------
 
 Prompt: She lives in San
-Completion: She lives in Sanakan, the of the oflg, the oflg, were the in the.  In theth andth, the, in the, was by the H, and the of, which was the to.  The H, which the of in, was a, as
+Completion: She lives in San Martín and her family.  At the age of eight, she is the first woman to visit a monastery.  The young hermit, who had become a child, died in her father's home in Narva, Tauva, about a year.  In the first of her life, she was a teacher of the school's school.  She is also the only mother of the schoolmaster.  The school's schoolmates are also the main school teacher and
 Stopped by: token limit
 
 Prompt: Gothenburg is
-Completion: Gothenburg is the of the of.  The's, the of, was on the, which from theth.  , Got, was a of Joia, the to the of Got on the of Ja in.  Gotn was in theth, and the to Ja,
-Stopped by: token limit
-
-Prompt: In natural language processing, a Transformer
-Completion: In natural language processing, a Transformer, a "c of the of the", is a to the, and the is a for the.  The is "Cand" for the of the.
+Completion: Gothenburg is also known as the Great Wall, a term used by historians to refer to the entire period of the First World War.  His reign spanned the years from 763 to 776, and ended with the defeat of the English forces in the Third World War, when the city fell to Great Britain in 1365.
 Stopped by: <EOS>
 
+Prompt: In natural language processing, a Transformer
+Completion: In natural language processing, a Transformer is a control-initiated program that is executed at the level of the data.  Code coverage in the program is performed at the state level and the system is then moved back in the state where the control is performed.  Code and control programs are then executed at the state level and are moved into the same state.  For a given data, the program is divided into bytes.  The data must be collected in order to determine whether the data is transferred to a particular data
+Stopped by: token limit
+
 Prompt: Is Stockholm the capital of Sweden? Answer yes or no. The answer is
-Completion: Is Stockholm the capital of Sweden? Answer yes or no. The answer is a steward p.   is the of the d, as a of the d in the d.
+Completion: Is Stockholm the capital of Sweden? Answer yes or no. The answer is from the original work:
 Stopped by: <EOS>
 
 Prompt: Write a Python program that reverses a list.
-Completion: Write a Python program that reverses a list.   and his are tob, aren't the are to.   have:
+Completion: Write a Python program that reverses a list.
 Stopped by: <EOS>
