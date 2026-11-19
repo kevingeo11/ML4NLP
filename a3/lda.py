@@ -30,8 +30,8 @@ class Preprocess:
         tokenized_documents = []
         stop_words = set(stopwords.words('english'))
         for doc in self.documents:
-            tokens = word_tokenize(doc.lower())  # convert to lowercase and word tokenize
-            tokens = [token for token in tokens if token.isalnum()]  # remove punctuation and hyphened words
+            tokens = word_tokenize(doc.lower(), language='english')  # convert to lowercase and word tokenize (splits .)
+            tokens = [token for token in tokens if token.isalnum()]  # remove tokens containing non-alphanumeric characters (. - , ')
             tokens = [token for token in tokens if token not in stop_words]  # remove stopwords
             tokenized_documents.append(tokens)
         return tokenized_documents
@@ -157,9 +157,11 @@ class LDA():
 
 if __name__ == "__main__":
 
-    nltk.download("stopwords")
-    nltk.download("punkt")
-    nltk.download("punkt_tab")
+    # nltk.download("stopwords")
+    # nltk.download("punkt")
+    # nltk.download("punkt_tab")
+
+    # nltk.data.path.append("nltk_data")
 
     document_file = "test_ap.txt"
 
