@@ -1,9 +1,9 @@
 import re
 
+import nltk
 import numpy as np
-
-# from nltk.corpus import stopwords
-# from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
 
 class Preprocess:
@@ -28,12 +28,11 @@ class Preprocess:
     # go through each document and tokenize it (convert to lowercase, remove punctuation and hyphened words, stopwords)
     def _tokenize_documents(self):
         tokenized_documents = []
-        # stop_words = set(stopwords.words('english')) # NLTK
+        stop_words = set(stopwords.words('english'))
         for doc in self.documents:
-            tokens = doc.lower().split()  # simple whitespace tokenizer and convert to lowercase
-            # tokens = word_tokenize(doc.lower())  # NLTK convert to lowercase and word tokenize
+            tokens = word_tokenize(doc.lower())  # convert to lowercase and word tokenize
             tokens = [token for token in tokens if token.isalnum()]  # remove punctuation and hyphened words
-            # tokens = [token for token in tokens if token not in stop_words]  # NLTK remove stopwords
+            tokens = [token for token in tokens if token not in stop_words]  # remove stopwords
             tokenized_documents.append(tokens)
         return tokenized_documents
 
@@ -157,6 +156,10 @@ class LDA():
 
 
 if __name__ == "__main__":
+
+    nltk.download("stopwords")
+    nltk.download("punkt")
+    nltk.download("punkt_tab")
 
     document_file = "test_ap.txt"
 
