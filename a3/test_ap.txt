@@ -1,0 +1,18 @@
+<DOC>
+<DOCNO> AP881218-0003 </DOCNO>
+<TEXT>
+ This is a sample test text for preprocessing.
+ </TEXT>
+</DOC>
+<DOC>
+<DOCNO> AP880224-0195 </DOCNO>
+<TEXT>
+ Another example sentence to test the preprocessing steps.
+ </TEXT>
+</DOC>
+<DOC>
+<DOCNO> AP880224-0195 </DOCNO>
+<TEXT>
+ Test this again with preprocessing to sample another sentence.
+ </TEXT>
+</DOC>

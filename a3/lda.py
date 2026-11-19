@@ -1,5 +1,7 @@
 import re
 
+import numpy as np
+
 # from nltk.corpus import stopwords
 # from nltk.tokenize import word_tokenize
 
@@ -102,7 +104,7 @@ class LDA():
 
     def n_dk(self, k, d, d_j):
         # number of times topic k appears in document d, not counting the current word d_j
-        occurences = np.sum(self.z[d] == k)
+        occurrences = np.sum(self.z[d] == k)
         if d_j[0] == d and self.z[d_j[0]][d_j[1]] == k:
             occurrences -= 1
         return occurrences
@@ -167,6 +169,7 @@ if __name__ == "__main__":
     # just for sanity check
     with open("p_sanity_check.txt", "w") as f:
         f.write("tokenized_documents: " + str(p.tokenized_documents) + "\n")
+        f.write("word_count: " + str(p.word_count) + "\n")
         f.write("vocabulary: " + str(p.vocabulary) + "\n")
         f.write("vocabulary_to_index: " + str(p.word_to_index) + "\n")
         f.write("filtered_documents: " + str(p.filtered_documents) + "\n")
