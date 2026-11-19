@@ -54,10 +54,18 @@ class Preprocess:
     def _tokenize_documents(self):
         tokenized_documents = []
         stop_words = set(stopwords.words('english'))
+        stop_words |= {
+            "said", "say", "told", "news",
+            "would", "could", "may",
+            "one", "two", "three", "first", "last",
+            "year", "years", "day", "week", "today", "time", "since", "new",
+            "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+            "also", "many", "made", "people",
+        }
         for doc in self.documents:
             text = doc.lower()
             tokens = [
-                token for token in word_tokenize(text)
+                token for token in word_tokenize(text, language="english")
                 if token.isalpha()            # words only
                 and len(token) > 2
                 and token not in stop_words   # remove stopwords
