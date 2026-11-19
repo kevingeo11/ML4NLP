@@ -101,15 +101,13 @@ class Preprocess:
 
 
 
-class LDA():
+class LDA:
 
-    def __init__(self, documents, alpha, beta, k, n_iter = 100):
+    def __init__(self, documents, V, alpha, beta, k, n_iter = 100, seed=0):
 
-        self.d = documents
+        self.documents = documents
         self.D = len(documents)
-
-        self.vocab = set(word for doc in self.d for word in doc)
-        self.V = len(self.vocab)
+        self.V = V
 
         self.alpha = alpha
         self.beta = beta
@@ -117,70 +115,110 @@ class LDA():
         self.n_iter = n_iter
 
         # randomly initialize the topic assignments for each word in each document
-        self.z = [np.random.choice(self.k, size=len(doc)) for doc in self.d]
+        self.rng = np.random.default_rng(seed)
+        self.z = [self.rng.choice(self.k, size=len(doc)) for doc in self.documents]
     
         self.n_dk = np.zeros((self.D, self.k), dtype=int)
         self.m_kv = np.zeros((self.k, self.V), dtype=int)
         self.m_k = np.zeros(self.k, dtype=int)
 
-    def choose_dj(self): 
-        # choose a word from the corpus within a document d_j, randomly 
-        doc_idx = np.random.randint(len(self.d))
-        word_idx = np.random.randint(len(self.d[doc_idx]))
-        return doc_idx, word_idx
+        self._init_counts()
 
+    def _init_counts(self):
+        # go through every token once and count its random starting label
+        for d, doc in enumerate(self.documents):
+            for j, v in enumerate(doc):
+                self._add(d, v, self.z[d][j])
 
+    def _add(self, d, v, k):
+        # put one token (word v in doc d, topic k) into the counts
+        self.n_dk[d, k] += 1
+        self.m_kv[k, v] += 1
+        self.m_k[k] += 1
 
-    def n_dk(self, k, d, d_j):
-        # number of times topic k appears in document d, not counting the current word d_j
-        occurrences = np.sum(self.z[d] == k)
-        if d_j[0] == d and self.z[d_j[0]][d_j[1]] == k:
-            occurrences -= 1
-        return occurrences
+    def _remove(self, d, v, k):
+        self.n_dk[d, k] -= 1
+        self.m_kv[k, v] -= 1
+        self.m_k[k] -= 1
 
-    
-    def m_kv(self, k, v, d_j):
-        # number of times word v is assigned to topic k, not counting the current word d_j
-        occurrences = 0
-        for d in range(len(self.d)):
-            for j, word in enumerate(self.d[d]):
-                if word == v and self.z[d][j] == k:
-                    occurrences += 1
-        if self.d[d_j[0]][d_j[1]] == v and self.z[d_j[0]][d_j[1]] == k:
-            occurrences -= 1
-        return occurrences
-    
-    def m_k(self, k, d_j):
-        # number of times topic k appears in the corpus, not counting the current word d_j
-        occurrences = sum(np.sum(self.z[d] == k) for d in range(len(self.d)))
-        if self.z[d_j[0]][d_j[1]] == k:
-            occurrences -= 1
-        return occurrences
-
-    def p_k(self, d_j):
-        
-        d = d_j[0]
-        j = d_j[1]
-        v = self.d[d][j]
-
-        q_k = []
-        for k in range(self.k):
-            n_dk = self.n_dk(k, d, d_j)
-            m_kv = self.m_kv(k, v, d_j)
-            m_k = self.m_k(k, d_j)
-            q_k.append((self.alpha + n_dk) * (self.beta + m_kv) / (self.beta * len(self.vocab) + m_k))
-       
-        return q_k / np.sum(q_k)
-
+    def p_k(self, d, v):
+        # probability of each topic for word v in doc d (current token already removed)
+        q_k = (self.alpha + self.n_dk[d]) * (self.beta + self.m_kv[:, v]) / (self.beta * self.V + self.m_k)
+        return q_k / q_k.sum()
 
     def collapsed_gibbs(self):
-        for i in range(self.n_iter):
+        for it in range(self.n_iter):              # one iteration = one pass over every token
+            changed = 0
+            for d, doc in enumerate(self.documents):
+                for j, v in enumerate(doc):
+                    old_k = self.z[d][j]
+                    self._remove(d, v, old_k)                        # 1. take the label off
+                    new_k = self.rng.choice(self.k, p=self.p_k(d, v))  # 2-3. score topics and sample
+                    self._add(d, v, new_k)                           # 4. put it back
+                    self.z[d][j] = new_k
+                    changed += int(new_k != old_k)
 
-            d_j = self.choose_dj()
-            p__k = self.p_k(d_j)
-            self.z[d_j[0], d_j[1]] = np.random.choice(self.k, p = p__k)
-        
+            if (it + 1) % 10 == 0:
+                print(f"iteration {it + 1}/{self.n_iter}: {changed:,} labels changed")
+
         return self.z
+
+
+    # def choose_dj(self): 
+    #     # choose a word from the corpus within a document d_j, randomly 
+    #     doc_idx = np.random.randint(len(self.documents))
+    #     word_idx = np.random.randint(len(self.d[doc_idx]))
+    #     return doc_idx, word_idx
+
+    # def n_dk(self, k, d, d_j):
+    #     # number of times topic k appears in document d, not counting the current word d_j
+    #     occurrences = np.sum(self.z[d] == k)
+    #     if d_j[0] == d and self.z[d_j[0]][d_j[1]] == k:
+    #         occurrences -= 1
+    #     return occurrences
+
+    
+    # def m_kv(self, k, v, d_j):
+    #     # number of times word v is assigned to topic k, not counting the current word d_j
+    #     occurrences = 0
+    #     for d in range(len(self.d)):
+    #         for j, word in enumerate(self.d[d]):
+    #             if word == v and self.z[d][j] == k:
+    #                 occurrences += 1
+    #     if self.d[d_j[0]][d_j[1]] == v and self.z[d_j[0]][d_j[1]] == k:
+    #         occurrences -= 1
+    #     return occurrences
+    
+    # def m_k(self, k, d_j):
+    #     # number of times topic k appears in the corpus, not counting the current word d_j
+    #     occurrences = sum(np.sum(self.z[d] == k) for d in range(len(self.d)))
+    #     if self.z[d_j[0]][d_j[1]] == k:
+    #         occurrences -= 1
+    #     return occurrences
+
+    # def p_k(self, d_j):
+        
+    #     d = d_j[0]
+    #     j = d_j[1]
+    #     v = self.d[d][j]
+
+    #     q_k = []
+    #     for k in range(self.k):
+    #         n_dk = self.n_dk(k, d, d_j)
+    #         m_kv = self.m_kv(k, v, d_j)
+    #         m_k = self.m_k(k, d_j)
+    #         q_k.append((self.alpha + n_dk) * (self.beta + m_kv) / (self.beta * len(self.vocab) + m_k))
+       
+    #     return q_k / np.sum(q_k)
+
+    # def collapsed_gibbs(self):
+    #     for i in range(self.n_iter):
+
+    #         d_j = self.choose_dj()
+    #         p__k = self.p_k(d_j)
+    #         self.z[d_j[0], d_j[1]] = np.random.choice(self.k, p = p__k)
+        
+    #     return self.z
 
 
 
