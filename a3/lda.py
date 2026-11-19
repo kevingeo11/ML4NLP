@@ -243,3 +243,11 @@ if __name__ == "__main__":
     #     f.write("vocabulary_to_index: " + str(p.word_to_index) + "\n")
     #     f.write("filtered_documents: " + str(p.filtered_documents) + "\n")
     #     f.write("documents_indices: " + str(p.documents_indices) + "\n")
+
+    lda = LDA(
+        documents=p.documents_indices,
+        V = len(p.vocabulary),
+        alpha = 0.1,
+        beta = 0.1,
+        k = 10
+    )
