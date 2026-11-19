@@ -172,63 +172,25 @@ class LDA:
         return self.z
 
 
-    # def choose_dj(self): 
-    #     # choose a word from the corpus within a document d_j, randomly 
-    #     doc_idx = np.random.randint(len(self.documents))
-    #     word_idx = np.random.randint(len(self.d[doc_idx]))
-    #     return doc_idx, word_idx
+def umass_coherence(phi, documents, V, M=20):
+    # X[d, v] = 1 if word v appears at least once in document d
+    X = np.zeros((len(documents), V), dtype=np.uint8)
+    for d, doc in enumerate(documents):
+        X[d, list(set(doc))] = 1
 
-    # def n_dk(self, k, d, d_j):
-    #     # number of times topic k appears in document d, not counting the current word d_j
-    #     occurrences = np.sum(self.z[d] == k)
-    #     if d_j[0] == d and self.z[d_j[0]][d_j[1]] == k:
-    #         occurrences -= 1
-    #     return occurrences
+    scores = []
+    for t in range(phi.shape[0]):
+        top = np.argsort(-phi[t])[:M]            # top M word IDs, most probable first
+        sub = X[:, top].astype(np.int32)         # D x M: which docs contain each top word
+        co = sub.T @ sub                         # co[m, l] = D(v_m, v_l), co[l, l] = D(v_l)
 
-    
-    # def m_kv(self, k, v, d_j):
-    #     # number of times word v is assigned to topic k, not counting the current word d_j
-    #     occurrences = 0
-    #     for d in range(len(self.d)):
-    #         for j, word in enumerate(self.d[d]):
-    #             if word == v and self.z[d][j] == k:
-    #                 occurrences += 1
-    #     if self.d[d_j[0]][d_j[1]] == v and self.z[d_j[0]][d_j[1]] == k:
-    #         occurrences -= 1
-    #     return occurrences
-    
-    # def m_k(self, k, d_j):
-    #     # number of times topic k appears in the corpus, not counting the current word d_j
-    #     occurrences = sum(np.sum(self.z[d] == k) for d in range(len(self.d)))
-    #     if self.z[d_j[0]][d_j[1]] == k:
-    #         occurrences -= 1
-    #     return occurrences
+        score = 0.0
+        for m in range(1, M):
+            for l in range(m):                   # l ranks above m
+                score += np.log((co[m, l] + 1) / co[l, l])
+        scores.append(score)
 
-    # def p_k(self, d_j):
-        
-    #     d = d_j[0]
-    #     j = d_j[1]
-    #     v = self.d[d][j]
-
-    #     q_k = []
-    #     for k in range(self.k):
-    #         n_dk = self.n_dk(k, d, d_j)
-    #         m_kv = self.m_kv(k, v, d_j)
-    #         m_k = self.m_k(k, d_j)
-    #         q_k.append((self.alpha + n_dk) * (self.beta + m_kv) / (self.beta * len(self.vocab) + m_k))
-       
-    #     return q_k / np.sum(q_k)
-
-    # def collapsed_gibbs(self):
-    #     for i in range(self.n_iter):
-
-    #         d_j = self.choose_dj()
-    #         p__k = self.p_k(d_j)
-    #         self.z[d_j[0], d_j[1]] = np.random.choice(self.k, p = p__k)
-        
-    #     return self.z
-
-
+    return np.array(scores)
 
 
 if __name__ == "__main__":
