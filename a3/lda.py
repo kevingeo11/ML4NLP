@@ -1,5 +1,7 @@
 import os
 import re
+import argparse
+import sys
 
 import nltk
 import numpy as np
@@ -200,9 +202,18 @@ class LDA:
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--corpora", default="data/ap.txt")
+    parser.add_argument("--k", default=10)
+    parser.add_argument("--alpha", default=0.1)
+    parser.add_argument("--beta", default=0.1)
+    parser.add_argument("--n_iter", default=100)
+    parser.add_argument("--output", default="output.txt")
+    args = parser.parse_args()
+    
     get_nltk_data()
 
-    document_file = "small_ap.txt"
+    document_file = args.corpora
 
     p = Preprocess(document_file=document_file, min_frequency=5)
 
@@ -222,15 +233,51 @@ if __name__ == "__main__":
     lda = LDA(
         documents=p.documents_indices,
         V = len(p.vocabulary),
-        alpha = 0.1,
-        beta = 0.1,
-        k = 10, 
-        M=10
+        alpha = args.alpha,
+        beta = args.beta,
+        k = args.k, 
+        M=20, 
+        n_iter = args.n_iter
     )
 
     coherence_scores = lda.umass_coherence()
-    for topic in range(lda.k):
-        print(f"\nTop words for topic {topic} with coherence score {coherence_scores[topic]:.4f}:")
-        for i in np.argsort(lda.m_kv[topic])[::-1][:10]:
-            print('\t' + p.vocabulary[i])
 
+    # Print to terminal and save to output file
+    class Tee:
+        def __init__(self, *streams):
+            self.streams = streams
+
+        def write(self, text):
+            for stream in self.streams:
+                stream.write(text)
+
+        def flush(self):
+            for stream in self.streams:
+                stream.flush()
+
+    # Generate outputs
+    with open(args.output, "w", encoding="utf-8") as f:
+        original_stdout = sys.stdout
+        sys.stdout = Tee(original_stdout, f)
+ 
+        try:
+            print("Names: Kevin George, Sofia Larsson, Thémis Halka")
+            print("Output")
+            print("-" * 20)
+            print(" ")
+            print("Corpora: AP corpus")
+            print("Model parameters: ")
+            print("     Topics K:", args.k)
+            print("     Alpha:", args.alpha)
+            print("     Beta:", args.beta)
+            print("     Number of iterations through corpora:", args.n_iter)
+
+            for topic in range(lda.k):
+                print(f"\nTop words for topic {topic} with coherence score {coherence_scores[topic]:.4f}:")
+                for i in np.argsort(lda.m_kv[topic])[::-1][:10]:
+                    print('\t' + p.vocabulary[i])
+ 
+        finally:
+            sys.stdout = original_stdout
+ 
+    print(f"\nEvaluation results saved to {args.output}")
