@@ -210,6 +210,10 @@ if __name__ == "__main__":
     parser.add_argument("--n_iter", type=int, default=100)
     parser.add_argument("--output", default="output.txt")
     args = parser.parse_args()
+
+    print("Run settings:")
+    for name, value in vars(args).items():
+        print(f"  {name}: {value}")
     
     get_nltk_data()
 

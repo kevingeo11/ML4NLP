@@ -1,11 +1,10 @@
 #!/bin/bash
 
-#SBATCH --job-name=eval_model
-#SBATCH --partition=short
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=4
+#SBATCH --job-name=lda
+#SBATCH --partition=long
+#SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
-#SBATCH --time=00:30:00
+#SBATCH --time=04:00:00
 #SBATCH --output=logs/run_lda_%j.out
 #SBATCH --error=logs/run_lda_%j.err
 
@@ -23,12 +22,6 @@ echo "Node: $(hostname)"
 echo "Job ID: $SLURM_JOB_ID"
 echo "Start time: $(date)"
 echo "================================"
-
-# Verify GPU allocation
-nvidia-smi
-
-# Create logs directory if it doesn't exist
-mkdir -p logs
 
 # Run model evaluation
 # Default parameters (can be overridden via command line)
