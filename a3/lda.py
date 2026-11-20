@@ -204,10 +204,10 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--corpora", default="data/ap.txt")
-    parser.add_argument("--k", default=10)
-    parser.add_argument("--alpha", default=0.1)
-    parser.add_argument("--beta", default=0.1)
-    parser.add_argument("--n_iter", default=100)
+    parser.add_argument("--k", type=int, default=10)
+    parser.add_argument("--alpha", type=float, default=0.1)
+    parser.add_argument("--beta", type=float, default=0.1)
+    parser.add_argument("--n_iter", type=int, default=100)
     parser.add_argument("--output", default="output.txt")
     args = parser.parse_args()
     
