@@ -84,7 +84,7 @@ class Preprocess:
     def _create_vocabulary(self):
         word_count = Counter(t for tokens in self.tokenized_documents for t in tokens)
 
-        filtered_word_count = {word: count for word, count in word_count.items() if count >= self.min_frequency}
+        filtered_word_count = {word: count for word, count in word_count.items() if count > self.min_frequency}
         vocabulary = sorted(filtered_word_count)
 
         print(f"Vocabulary size:        {len(word_count):,} -> {len(vocabulary):,} (min frequency {self.min_frequency})")
@@ -215,20 +215,7 @@ if __name__ == "__main__":
 
     document_file = args.corpora
 
-    p = Preprocess(document_file=document_file, min_frequency=5)
-
-    # # save vocabulary
-    # with open("vocabulary.txt", "w", encoding="utf-8") as f:
-    #     f.write("\n".join(p.vocabulary) + "\n")
-
-    # # just for sanity check
-    # with open("p_sanity_check.txt", "w") as f:
-    #     f.write("tokenized_documents: " + str(p.tokenized_documents) + "\n")
-    #     f.write("word_count: " + str(p.word_count) + "\n")
-    #     f.write("vocabulary: " + str(p.vocabulary) + "\n")
-    #     f.write("vocabulary_to_index: " + str(p.word_to_index) + "\n")
-    #     f.write("filtered_documents: " + str(p.filtered_documents) + "\n")
-    #     f.write("documents_indices: " + str(p.documents_indices) + "\n")
+    p = Preprocess(document_file=document_file, min_frequency=10)
 
     lda = LDA(
         documents=p.documents_indices,
@@ -239,7 +226,7 @@ if __name__ == "__main__":
         M=20, 
         n_iter = args.n_iter
     )
-
+    lda.collapsed_gibbs() 
     coherence_scores = lda.umass_coherence()
 
     # Print to terminal and save to output file
