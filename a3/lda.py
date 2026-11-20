@@ -86,7 +86,7 @@ class Preprocess:
         vocabulary = sorted(filtered_word_count)
 
         print(f"Vocabulary size:        {len(word_count):,} -> {len(vocabulary):,} (min frequency {self.min_frequency})")
-        print("Top 20 words:", ", ".join(w for w, _ in word_count.most_common(20)))
+        print("Top 20 words in vocabulary:", ", ".join(w for w, _ in word_count.most_common(20)))
 
         return vocabulary
         
@@ -202,9 +202,9 @@ if __name__ == "__main__":
 
     get_nltk_data()
 
-    document_file = "data/ap.txt"
+    document_file = "small_ap.txt"
 
-    p = Preprocess(document_file=document_file, min_frequency=10)
+    p = Preprocess(document_file=document_file, min_frequency=5)
 
     # # save vocabulary
     # with open("vocabulary.txt", "w", encoding="utf-8") as f:
@@ -224,5 +224,13 @@ if __name__ == "__main__":
         V = len(p.vocabulary),
         alpha = 0.1,
         beta = 0.1,
-        k = 10
+        k = 10, 
+        M=10
     )
+
+    coherence_scores = lda.umass_coherence()
+    for topic in range(lda.k):
+        print(f"\nTop words for topic {topic} with coherence score {coherence_scores[topic]:.4f}:")
+        for i in np.argsort(lda.m_kv[topic])[::-1][:10]:
+            print('\t' + p.vocabulary[i])
+
