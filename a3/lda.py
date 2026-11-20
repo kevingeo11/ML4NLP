@@ -111,7 +111,7 @@ class Preprocess:
 
 class LDA:
 
-    def __init__(self, documents, V, alpha, beta, k, n_iter = 100, seed=0):
+    def __init__(self, documents, V, alpha, beta, k, n_iter = 100, seed=0, M=20):
 
         self.documents = documents
         self.D = len(documents)
@@ -121,6 +121,7 @@ class LDA:
         self.beta = beta
         self.k = k
         self.n_iter = n_iter
+        self.M = M
 
         # randomly initialize the topic assignments for each word in each document
         self.rng = np.random.default_rng(seed)
@@ -172,25 +173,29 @@ class LDA:
         return self.z
 
 
-def umass_coherence(phi, documents, V, M=20):
-    # X[d, v] = 1 if word v appears at least once in document d
-    X = np.zeros((len(documents), V), dtype=np.uint8)
-    for d, doc in enumerate(documents):
-        X[d, list(set(doc))] = 1
+    def umass_coherence(self):
 
-    scores = []
-    for t in range(phi.shape[0]):
-        top = np.argsort(-phi[t])[:M]            # top M word IDs, most probable first
-        sub = X[:, top].astype(np.int32)         # D x M: which docs contain each top word
-        co = sub.T @ sub                         # co[m, l] = D(v_m, v_l), co[l, l] = D(v_l)
+        # create a document-word occurrence matrix Dv where Dv[d, v] = 1 if word v appears in document d
+        Dv = np.zeros((self.D, self.V))
+        for d, doc in enumerate(self.documents):
+            Dv[d, list(set(doc))] = 1
 
-        score = 0.0
-        for m in range(1, M):
-            for l in range(m):                   # l ranks above m
-                score += np.log((co[m, l] + 1) / co[l, l])
-        scores.append(score)
+        scores = []
+        for topic in range(self.k):
+            topM = np.argsort(self.m_kv[topic])[::-1][:self.M] # get the top M words for this topic
 
-    return np.array(scores)
+            Dv_sub = Dv[:, topM] # subset of Dv containing only the top M words for this topic
+            Dvv_sub = Dv_sub.T @ Dv_sub # co-occurrence matrix for the top M words in this topic
+
+            score = 0.0
+            for m in range(1, self.M):
+                for l in range(m):
+                    score += np.log((Dvv_sub[m, l] + 1) / Dvv_sub[l, l]) # UMass coherence for word pair (l, m)
+            scores.append(score)
+
+        return np.array(scores)
+
+
 
 
 if __name__ == "__main__":
