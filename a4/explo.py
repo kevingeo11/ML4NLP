@@ -27,9 +27,9 @@ questions = pd.DataFrame({"question": tmp_data.QUESTION,
              "gold_context": tmp_data.LONG_ANSWER,
              "gold_document_id": documents.index})
 
-
-print(questions.iloc[0].question)
-print(documents.iloc[0].abstract)
+# Sanity check
+# print(questions.iloc[0].question)
+# print(documents.iloc[0].abstract)
 
 ## Step 2 
 model = HuggingFacePipeline.from_model_id(
@@ -50,7 +50,8 @@ embeddings = HuggingFaceEmbeddings(
 
 query_embedding = embeddings.embed_query("This is a test document.")
 
-print(len(query_embedding)) # prints embedding_dim: 768
+# Sanity check
+# print(len(query_embedding)) # prints embedding_dim: 768
 
 
 ## Step 3.2: Chunking
@@ -64,7 +65,9 @@ text_splitter = RecursiveCharacterTextSplitter(
 metadatas = [{"id": idx} for idx in documents.index]
 texts = text_splitter.create_documents(texts=documents.abstract.tolist(), metadatas=metadatas)
 
-print(texts[0].page_content) # prints the first chunk
+# Sanity check
+# print(texts[0].page_content) # prints the first chunk
+
 
 ## Step 3.3: Vector store
 vector_store = Chroma(
@@ -73,20 +76,23 @@ vector_store = Chroma(
 )
 vector_store.add_documents(texts[:10]) # TODO change this!
 
-results = vector_store.similarity_search_with_score(
-    "What is programmed cell death?", k=3
-)
-for res, score in results:
-    print(f"* [DIST={score:3f}] {res.page_content} [{res.metadata}]")
+# Sanity check
+# results = vector_store.similarity_search_with_score(
+#     "What is programmed cell death?", k=3
+# )
+# for res, score in results:
+#     print(f"* [DIST={score:3f}] {res.page_content} [{res.metadata}]")
+
 
 ## Step 4 
 ## Option B: Build a RAG chain based on LangChain Open Tutorial
 
 retriever = vector_store.as_retriever() 
 
-template = """Answer the question based only on the following context:
-{context}
+template = """You are a biomedical expert. Answer the question using only the context below.
+Answer with a single word: "Yes" or "No".
 
+Context: {context}
 Question: {question}
 """
 
@@ -100,6 +106,7 @@ chain = (
 runnable_parallel_object = RunnableParallel(context=retriever, question=RunnablePassthrough())
 rag_chain = runnable_parallel_object.assign(answer=chain)
 
+# Sanity check for the RAG chain - TODO include in output file
 idx = 0
 q = questions.iloc[idx].question
 out = rag_chain.invoke(q)
@@ -107,36 +114,33 @@ out = rag_chain.invoke(q)
 print("QUESTION:", out["question"])
 print("RETRIEVED:", [d.metadata["id"] for d in out["context"]],
       "| GOLD:", questions.iloc[idx].gold_document_id)
-print("CONTEXT:", out["context"][0].page_content[:500])
+print("CONTEXT:", out["context"][0].page_content[:100])
 print("ANSWER:", out["answer"])
 
-match_groundtruth = ["yes" if answer["context"][metadata["id"] == documents.iloc[idx]]]
-#print("Groundtruth context: ",
 
-
+## Step 5: Evaluate RAG on the dataset
 
 df = pd.DataFrame(columns=["question_nr", "answer", "gold_label", "retrieved_document"])
-for i in range(3): 
+for i in range(2): 
 
     gold_label = questions.iloc[i].gold_label.lower()
 
     q = questions.iloc[i]
     out = rag_chain.invoke(q.question)
-    df.loc[i] = [i, out["answer"], gold_label, q.gold_document_id in [d.metadata["id"] for d in out["context"]]]
 
-
-for answer in df["answer"]:
-    
+    answer = out["answer"]
     answer = answer.strip().lower()
-
     if answer not in ["yes", "no"]:
         answer = "wrong format"
 
+    df.loc[i] = [i, answer, gold_label, q.gold_document_id in [d.metadata["id"] for d in out["context"]]]
+
 
 nr_wrong_format = df["answer"].isin(["wrong format"]).sum()
-print("Number of wrong format answers:", nr_wrong_format)
+print("Number of wrong format answers:", nr_wrong_format, "/", len(df))
+print("Proportion of wrong format answers:", f"{nr_wrong_format / len(df) : .2f}")
 
-print("Proportion of wrong format answers:", nr_wrong_format / len(df))
+
 
 df = df[df["answer"].isin(["yes", "no"])]
 
@@ -147,7 +151,6 @@ f1 = f1_score(y_true, y_pred)
 accuracy = accuracy_score(y_true, y_pred)
 print("F1 score:", f1)
 print("Accuracy:", accuracy)
-
 
 
 
