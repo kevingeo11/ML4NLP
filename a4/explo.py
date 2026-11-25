@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.metrics import f1_score, accuracy_score
 from datasets import DatasetDict, load_dataset
 from langchain_huggingface import HuggingFacePipeline
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -109,40 +110,54 @@ print("RETRIEVED:", [d.metadata["id"] for d in out["context"]],
 print("CONTEXT:", out["context"][0].page_content[:500])
 print("ANSWER:", out["answer"])
 
-match_groundtruth = ["yes" if answer["context"][metadata["id"] == documents.iloc[idx]]
+match_groundtruth = ["yes" if answer["context"][metadata["id"] == documents.iloc[idx]]]
 #print("Groundtruth context: ",
 
 
-answers = []
-retrieved_document= []
+
+df = pd.DataFrame(columns=["question_nr", "answer", "gold_label", "retrieved_document"])
 for i in range(3): 
+
+    gold_label = questions.iloc[i].gold_label.lower()
 
     q = questions.iloc[i]
     out = rag_chain.invoke(q.question)
-    answers.append(out["answer"])
-    retrieved_document.append(q.gold_document_id in [d.metadata["id"] for d in out["context"]])
+    df.loc[i] = [i, out["answer"], gold_label, q.gold_document_id in [d.metadata["id"] for d in out["context"]]]
 
 
-def check(answer, ground_truth):
-
-    if 
-
-    if answer == ground_truth:
-        return True
-    else:
-        return False
-
-
-
-for idx, answer in enumerate(answers):
+for answer in df["answer"]:
     
-    answer = answer.strip()
-    answer = answer.lower()
-    
-    groundtruth = question.gold_id[idx].lower()
+    answer = answer.strip().lower()
 
     if answer not in ["yes", "no"]:
         answer = "wrong format"
+
+
+nr_wrong_format = df["answer"].isin(["wrong format"]).sum()
+print("Number of wrong format answers:", nr_wrong_format)
+
+print("Proportion of wrong format answers:", nr_wrong_format / len(df))
+
+df = df[df["answer"].isin(["yes", "no"])]
+
+# calculate f1 score
+y_true = df["gold_label"]
+y_pred = df["answer"]
+f1 = f1_score(y_true, y_pred)
+accuracy = accuracy_score(y_true, y_pred)
+print("F1 score:", f1)
+print("Accuracy:", accuracy)
+
+
+
+
+
+
+
     
-    check
+    
+
+
+
+
     
