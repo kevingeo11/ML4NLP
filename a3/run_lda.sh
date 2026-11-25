@@ -2,9 +2,9 @@
 
 #SBATCH --job-name=lda
 #SBATCH --partition=long
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=1
 #SBATCH --mem=8G
-#SBATCH --time=04:00:00
+#SBATCH --time=02:00:00
 #SBATCH --output=logs/run_lda_%j.out
 #SBATCH --error=logs/run_lda_%j.err
 
@@ -24,6 +24,7 @@ echo "Start time: $(date)"
 echo "================================"
 
 # Run model evaluation
+# Names: Kevin George, Sofia Larsson, Thémis Halka
 # Default parameters (can be overridden via command line)
 python -u lda.py \
     --k 50 \

@@ -1,0 +1,610 @@
+Names: Kevin George, Sofia Larsson, Thémis Halka
+Output
+--------------------
+ 
+Corpora: AP corpus
+Model parameters: 
+     Topics K: 50
+     Alpha: 0.1
+     Beta: 0.1
+     Number of iterations through corpora: 200
+
+Top words for topic 0 with coherence score -449.1714:
+	drug
+	aids
+	cocaine
+	drugs
+	used
+	virus
+	enforcement
+	agents
+	use
+	tests
+
+Top words for topic 1 with coherence score -425.7935:
+	president
+	newspaper
+	office
+	former
+	book
+	editor
+	york
+	wrote
+	magazine
+	washington
+
+Top words for topic 2 with coherence score -421.3529:
+	bank
+	million
+	federal
+	billion
+	money
+	loan
+	tax
+	estate
+	banks
+	interest
+
+Top words for topic 3 with coherence score -206.5738:
+	stock
+	market
+	index
+	points
+	stocks
+	trading
+	exchange
+	rose
+	million
+	shares
+
+Top words for topic 4 with coherence score -353.2758:
+	million
+	sales
+	billion
+	percent
+	share
+	earnings
+	quarter
+	total
+	period
+	fiscal
+
+Top words for topic 5 with coherence score -333.1415:
+	trade
+	japan
+	farmers
+	farm
+	japanese
+	agriculture
+	tons
+	american
+	agricultural
+	production
+
+Top words for topic 6 with coherence score -366.1681:
+	police
+	government
+	killed
+	capital
+	demonstrators
+	protest
+	protesters
+	security
+	reported
+	lebanon
+
+Top words for topic 7 with coherence score -281.0999:
+	think
+	get
+	going
+	like
+	want
+	says
+	make
+	even
+	back
+	know
+
+Top words for topic 8 with coherence score -346.5476:
+	defense
+	department
+	pentagon
+	report
+	military
+	navy
+	general
+	house
+	committee
+	weapons
+
+Top words for topic 9 with coherence score -276.9919:
+	space
+	shuttle
+	nasa
+	launch
+	earth
+	mission
+	venus
+	spacecraft
+	magellan
+	rocket
+
+Top words for topic 10 with coherence score -313.0287:
+	soviet
+	gorbachev
+	union
+	president
+	aid
+	summit
+	reagan
+	moscow
+	bush
+	soviets
+
+Top words for topic 11 with coherence score -421.8479:
+	killed
+	police
+	army
+	rebels
+	military
+	northern
+	attack
+	india
+	government
+	guerrillas
+
+Top words for topic 12 with coherence score -461.8221:
+	members
+	money
+	trust
+	committee
+	contributions
+	received
+	million
+	fund
+	claims
+	funds
+
+Top words for topic 13 with coherence score -286.0509:
+	company
+	stock
+	business
+	offer
+	billion
+	companies
+	firm
+	chairman
+	share
+	president
+
+Top words for topic 14 with coherence score -404.2188:
+	north
+	reagan
+	case
+	documents
+	former
+	security
+	keating
+	walsh
+	testimony
+	government
+
+Top words for topic 15 with coherence score -349.5273:
+	bill
+	senate
+	house
+	committee
+	legislation
+	congress
+	vote
+	measure
+	law
+	president
+
+Top words for topic 16 with coherence score -359.4552:
+	west
+	east
+	israel
+	german
+	germany
+	israeli
+	jewish
+	palestinian
+	peace
+	berlin
+
+Top words for topic 17 with coherence score -436.3796:
+	south
+	north
+	korea
+	korean
+	officials
+	government
+	communist
+	agency
+	president
+	official
+
+Top words for topic 18 with coherence score -265.4214:
+	oil
+	cents
+	futures
+	cent
+	lower
+	prices
+	higher
+	market
+	crude
+	per
+
+Top words for topic 19 with coherence score -388.0687:
+	health
+	medical
+	hospital
+	care
+	disease
+	doctors
+	patients
+	heart
+	treatment
+	cancer
+
+Top words for topic 20 with coherence score -418.0679:
+	computer
+	system
+	study
+	work
+	research
+	university
+	information
+	researchers
+	program
+	use
+
+Top words for topic 21 with coherence score -336.8980:
+	southern
+	weather
+	northern
+	fair
+	rain
+	texas
+	central
+	snow
+	inches
+	degrees
+
+Top words for topic 22 with coherence score -291.4114:
+	percent
+	rate
+	report
+	economy
+	increase
+	prices
+	rates
+	government
+	month
+	price
+
+Top words for topic 23 with coherence score -357.6877:
+	fire
+	officials
+	building
+	area
+	miles
+	city
+	town
+	state
+	park
+	homes
+
+Top words for topic 24 with coherence score -286.7530:
+	party
+	government
+	political
+	opposition
+	gorbachev
+	communist
+	minister
+	elections
+	country
+	power
+
+Top words for topic 25 with coherence score -441.6967:
+	rights
+	government
+	human
+	china
+	country
+	report
+	immigration
+	population
+	prisoners
+	cuba
+
+Top words for topic 26 with coherence score -462.9137:
+	television
+	nbc
+	network
+	cbs
+	abc
+	show
+	barry
+	broadcast
+	radio
+	rating
+
+Top words for topic 27 with coherence score -260.9932:
+	iraq
+	kuwait
+	iraqi
+	iran
+	saudi
+	gulf
+	war
+	bush
+	arabia
+	oil
+
+Top words for topic 28 with coherence score -400.1314:
+	church
+	pope
+	catholic
+	religious
+	john
+	paul
+	roman
+	vatican
+	mexico
+	art
+
+Top words for topic 29 with coherence score -289.0269:
+	bush
+	dukakis
+	campaign
+	jackson
+	democratic
+	republican
+	president
+	presidential
+	state
+	george
+
+Top words for topic 30 with coherence score -296.4956:
+	bush
+	budget
+	billion
+	tax
+	deficit
+	administration
+	spending
+	congress
+	president
+	taxes
+
+Top words for topic 31 with coherence score -378.4084:
+	children
+	family
+	mother
+	home
+	parents
+	child
+	life
+	wife
+	son
+	daughter
+
+Top words for topic 32 with coherence score -326.3800:
+	police
+	man
+	shot
+	death
+	found
+	night
+	victims
+	killed
+	car
+	died
+
+Top words for topic 33 with coherence score -358.6393:
+	court
+	case
+	judge
+	federal
+	state
+	attorney
+	law
+	filed
+	decision
+	ruling
+
+Top words for topic 34 with coherence score -351.3903:
+	united
+	states
+	world
+	countries
+	europe
+	nations
+	foreign
+	international
+	france
+	economic
+
+Top words for topic 35 with coherence score -300.2004:
+	military
+	force
+	troops
+	panama
+	army
+	forces
+	american
+	noriega
+	soldiers
+	united
+
+Top words for topic 36 with coherence score -455.1452:
+	school
+	students
+	university
+	college
+	student
+	education
+	board
+	high
+	teachers
+	schools
+
+Top words for topic 37 with coherence score -417.6286:
+	ship
+	navy
+	coast
+	boat
+	sea
+	miles
+	island
+	guard
+	spokesman
+	officials
+
+Top words for topic 38 with coherence score -335.0339:
+	south
+	africa
+	black
+	african
+	white
+	mandela
+	blacks
+	government
+	national
+	apartheid
+
+Top words for topic 39 with coherence score -457.4851:
+	film
+	show
+	movie
+	music
+	world
+	band
+	black
+	around
+	record
+	man
+
+Top words for topic 40 with coherence score -250.1189:
+	dollar
+	yen
+	late
+	gold
+	london
+	bid
+	bank
+	ounce
+	fell
+	rates
+
+Top words for topic 41 with coherence score -442.9476:
+	women
+	general
+	attorney
+	meese
+	club
+	office
+	members
+	justice
+	society
+	public
+
+Top words for topic 42 with coherence score -323.0654:
+	prison
+	charges
+	trial
+	convicted
+	court
+	attorney
+	former
+	guilty
+	judge
+	state
+
+Top words for topic 43 with coherence score -479.3804:
+	city
+	stores
+	homeless
+	store
+	cities
+	mayor
+	food
+	rural
+	christmas
+	nordstrom
+
+Top words for topic 44 with coherence score -444.5336:
+	john
+	york
+	city
+	american
+	miss
+	ago
+	award
+	actor
+	theater
+	director
+
+Top words for topic 45 with coherence score -382.8309:
+	workers
+	union
+	labor
+	employees
+	strike
+	contract
+	jobs
+	work
+	company
+	chrysler
+
+Top words for topic 46 with coherence score -490.0394:
+	police
+	san
+	officials
+	los
+	angeles
+	city
+	bus
+	area
+	damage
+	authorities
+
+Top words for topic 47 with coherence score -383.0767:
+	environmental
+	plant
+	water
+	waste
+	energy
+	epa
+	plants
+	pollution
+	department
+	states
+
+Top words for topic 48 with coherence score -373.5091:
+	air
+	plane
+	flight
+	airport
+	airlines
+	airline
+	eastern
+	pilots
+	aircraft
+	planes
+
+Top words for topic 49 with coherence score -315.7113:
+	plan
+	committee
+	help
+	take
+	president
+	must
+	program
+	might
+	including
+	decision

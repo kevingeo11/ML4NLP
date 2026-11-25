@@ -1,0 +1,130 @@
+Names: Kevin George, Sofia Larsson, Thémis Halka
+Output
+--------------------
+ 
+Corpora: AP corpus
+Model parameters: 
+     Topics K: 10
+     Alpha: 0.01
+     Beta: 0.01
+     Number of iterations through corpora: 200
+
+Top words for topic 0 with coherence score -380.4377:
+	company
+	million
+	billion
+	workers
+	business
+	president
+	union
+	employees
+	companies
+	federal
+
+Top words for topic 1 with coherence score -309.7458:
+	soviet
+	government
+	party
+	police
+	gorbachev
+	union
+	minister
+	east
+	west
+	president
+
+Top words for topic 2 with coherence score -351.8450:
+	united
+	states
+	south
+	iraq
+	military
+	africa
+	american
+	countries
+	aid
+	japan
+
+Top words for topic 3 with coherence score -272.7318:
+	congress
+	committee
+	bill
+	house
+	program
+	budget
+	administration
+	system
+	states
+	members
+
+Top words for topic 4 with coherence score -287.1536:
+	percent
+	million
+	billion
+	sales
+	report
+	rate
+	prices
+	increase
+	economy
+	government
+
+Top words for topic 5 with coherence score -258.3292:
+	bush
+	president
+	dukakis
+	campaign
+	democratic
+	reagan
+	republican
+	state
+	jackson
+	presidential
+
+Top words for topic 6 with coherence score -283.5074:
+	court
+	case
+	judge
+	attorney
+	trial
+	state
+	charges
+	prison
+	federal
+	drug
+
+Top words for topic 7 with coherence score -401.2729:
+	air
+	miles
+	officials
+	fire
+	area
+	water
+	city
+	state
+	plane
+	spokesman
+
+Top words for topic 8 with coherence score -347.6504:
+	police
+	school
+	children
+	city
+	home
+	family
+	man
+	like
+	hospital
+	students
+
+Top words for topic 9 with coherence score -281.6151:
+	market
+	stock
+	dollar
+	trading
+	cents
+	prices
+	york
+	oil
+	exchange
+	late
